@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.kcroz.joggr.JoggingActivity">
+
+    <Button
+        android:id="@+id/btnStartJogging"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Start Jogging"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Button
+        android:id="@+id/btnStopJogging"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="200dp"
+        android:layout_marginTop="16dp"
+        android:text="Stop Jogging"
+        app:layout_constraintLeft_toLeftOf="@+id/btnStartJogging"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/mapConstraint"
+        android:layout_width="0dp"
+        android:layout_height="469dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnStopJogging"
+        app:layout_constraintVertical_bias="0.0">>
+
+        <fragment android:id="@+id/joggingMap"
+                  android:name="com.google.android.gms.maps.SupportMapFragment"
+
+                  xmlns:map="http://schemas.android.com/apk/res-auto"
+
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  map:layout_constraintBottom_toBottomOf="parent"
+                  map:layout_constraintEnd_toEndOf="parent"
+                  map:layout_constraintStart_toStartOf="parent"
+                  map:layout_constraintTop_toTopOf="parent"
+                  tools:context="com.example.kcroz.joggr.JoggingActivity"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tvOutput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="28dp"
+        android:text="TextView"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/mapConstraint"
+        tools:layout_editor_absoluteY="549dp"/>
+
+
+
+</android.support.constraint.ConstraintLayout>
