@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="#fff">
+
+    <ImageView
+        android:id="@+id/ivRunIcon"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="10dp"
+        android:padding="5dp"
+        android:src="@drawable/icon_jog"/>
+
+    <TextView
+        android:id="@+id/tvRunDate"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:text="Date"
+        android:textColor="#000" />
+
+    <TextView
+        android:id="@+id/tvRunTitle"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:text="Title"
+        android:textColor="#000" />
+
+    <TextView
+        android:id="@+id/tvRunDistance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:text="Distance"
+        android:textColor="#000" />
+</LinearLayout>

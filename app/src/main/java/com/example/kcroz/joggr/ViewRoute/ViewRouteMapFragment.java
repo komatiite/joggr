@@ -66,14 +66,18 @@ public class ViewRouteMapFragment extends Fragment implements OnMapReadyCallback
             points.add(new LatLng(Float.parseFloat(entry.get("Latitude")), Float.parseFloat(entry.get("Longitude"))));
         }
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(points.get(0).latitude, points.get(0).longitude), DEFAULT_ZOOM));
+        Log.d("Points size", "" + points.size());
 
-        PolylineOptions polylineOptions = new PolylineOptions();
-        polylineOptions.addAll(points);
-        polylineOptions
-                .width(5)
-                .color(Color.RED);
+        if (points.size() != 0) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(points.get(0).latitude, points.get(0).longitude), DEFAULT_ZOOM));
 
-        mMap.addPolyline(polylineOptions);
+            PolylineOptions polylineOptions = new PolylineOptions();
+            polylineOptions.addAll(points);
+            polylineOptions
+                    .width(5)
+                    .color(Color.RED);
+
+            mMap.addPolyline(polylineOptions);
+        }
     }
 }

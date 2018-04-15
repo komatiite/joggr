@@ -242,6 +242,67 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
+    public List<String> loadRunDates() {
+        List<String> lm = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] selection = { COL_DATE};
+
+        Cursor c = db.query(RUNS_TABLE_NAME,	//The name of the table to query
+                selection,				//The columns to return
+                null,					//The columns for the where clause
+                null,					//The values for the where clause
+                null,					//Group the rows
+                null,					//Filter the row groups
+                null);					//The sort order
+
+        c.moveToFirst();
+
+        for(int i=0; i < c.getCount(); i++) {
+            lm.add(c.getString(0));
+            c.moveToNext();
+        }
+
+        c.close();
+        db.close();
+
+        return lm;
+    }
+
+    public List<RunData> loadRunDataToObject() {
+        List<RunData> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] selection = { COL_RUN_ID, COL_DATE, COL_TITLE, COL_DISTANCE, COL_RUN_TIME, COL_RATING, COL_COMMENT};
+
+        Cursor c = db.query(RUNS_TABLE_NAME,	//The name of the table to query
+                selection,				//The columns to return
+                null,					//The columns for the where clause
+                null,					//The values for the where clause
+                null,					//Group the rows
+                null,					//Filter the row groups
+                null);					//The sort order
+
+        c.moveToFirst();
+
+        for(int i=0; i < c.getCount(); i++) {
+            RunData run = new RunData(Integer.parseInt(c.getString(0)));
+
+            run.setDate(c.getString(1))
+                    .setTitle(c.getString(2))
+                    .setDistance(c.getFloat(3))
+                    .setRunTime(c.getString(4))
+                    .setRating(c.getInt(5))
+                    .setComment(c.getString(6));
+            list.add(run);
+            c.moveToNext();
+        }
+
+        c.close();
+        db.close();
+
+        return list;
+    }
 
 
     public List<Map<String,String>> loadRunDataToHash() {
@@ -322,10 +383,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
 
         cv.put(COL_TITLE, title);
+        //cv.put(COL_DISTANCE, String.valueOf(distance));
         cv.put(COL_RATING, String.valueOf(rating));
         cv.put(COL_COMMENT, comment);
 
         db.update(RUNS_TABLE_NAME, cv, COL_RUN_ID + "=" + runID, null);
+
+        db.close();
+    }
+
+    public void deleteRun(int runID) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        db.execSQL("delete from " + POINTS_TABLE_NAME + " where " + COL_RUN_ID_FK + "=" + runID);
+        db.execSQL("delete from " + RUNS_TABLE_NAME + " where " + COL_RUN_ID + "=" + runID);
 
         db.close();
     }

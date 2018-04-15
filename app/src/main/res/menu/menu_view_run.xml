@@ -1,0 +1,21 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="com.example.kcroz.joggr.ViewRoute.ViewRouteActivity">
+    <item
+        android:id="@+id/menuExportCSV"
+        android:orderInCategory="100"
+        android:title="Export Data To CSV"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menuEditRun"
+        android:orderInCategory="100"
+        android:title="Edit Run"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menuDeleteRun"
+        android:orderInCategory="100"
+        android:title="Delete Run"
+        app:showAsAction="never" />
+
+</menu>

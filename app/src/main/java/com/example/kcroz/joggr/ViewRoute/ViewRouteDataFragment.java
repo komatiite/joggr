@@ -27,6 +27,8 @@ public class ViewRouteDataFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_view_route_data, container, false);
 
+        Log.d("loaded", "loaded?");
+
         context = getActivity();
 
         runID = Integer.parseInt(getArguments().getString("RUN_ID"));
