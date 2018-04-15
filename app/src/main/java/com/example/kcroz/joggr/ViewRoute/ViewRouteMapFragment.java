@@ -35,7 +35,7 @@ public class ViewRouteMapFragment extends Fragment implements OnMapReadyCallback
     private Context context;
     private int runID;
     private List<Map<String,String>> routeData;
-    private static float DEFAULT_ZOOM = 13.0f;
+    private static float DEFAULT_ZOOM = 18.0f;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_view_route_map, container, false);

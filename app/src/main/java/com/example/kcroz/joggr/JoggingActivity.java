@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kcroz.joggr.ListRuns.ListRunsActivity;
+import com.example.kcroz.joggr.RecordRoute.EditSource;
 import com.example.kcroz.joggr.RecordRoute.GPSService;
 import com.example.kcroz.joggr.RecordRoute.InsertRoutePoint;
 import com.example.kcroz.joggr.RecordRoute.InsertRun;
@@ -49,12 +50,10 @@ public class JoggingActivity extends FragmentActivity implements OnMapReadyCallb
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
-
     private Context _context;
     private Button btnStartJogging;
     private Button btnStopJogging;
     private GoogleMap mMap;
-    private static int REQUEST_ACCESS_LOCATION = 1;
     private BroadcastReceiver _receiver;
     private static String GPS_LOCATION = "GPS_Location";
     private static String LATITUDE = "Latitude";
@@ -97,42 +96,11 @@ public class JoggingActivity extends FragmentActivity implements OnMapReadyCallb
 
         tvOutput = findViewById(R.id.tvOutput);
 
-        if (hasPermissions()) {
-            enableStartStopButtons();
-        }
+        enableStartStopButtons();
 
-        //mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.joggingMap);
+        SupportMapFragment mapFragment = (SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.joggingMap);
         mapFragment.getMapAsync(this);
-    }
 
-    private boolean hasPermissions() {
-        if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{ android.Manifest.permission.ACCESS_FINE_LOCATION },
-                    REQUEST_ACCESS_LOCATION);
-
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-
-        // Check if the user accepted the permissions prompt
-        if (requestCode == REQUEST_ACCESS_LOCATION
-                && grantResults.length > 0
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            enableStartStopButtons();
-        }
-        else {
-            Toast.makeText(this, "Error: Access fine location permission denied", Toast.LENGTH_LONG).show();
-        }
     }
 
     private void enableStartStopButtons() {
@@ -157,12 +125,7 @@ public class JoggingActivity extends FragmentActivity implements OnMapReadyCallb
                     }
                 }).execute();
 
-                //btnStartJogging.setVisibility(View.INVISIBLE);
-                //btnStopJogging.setVisibility(View.VISIBLE);
-
                 _running = true;
-
-                Log.d("JoggingActivity", "Start Jogging clicked.");
             }
         });
 
@@ -173,9 +136,10 @@ public class JoggingActivity extends FragmentActivity implements OnMapReadyCallb
 
                 stopGPSService();
 
-                Intent activityIntent = new Intent(JoggingActivity.this, EditRunActivity.class);
-                activityIntent.putExtra("runID", String.valueOf(_runID));
-                startActivity(activityIntent);
+                Intent editRunIntent = new Intent(JoggingActivity.this, EditRunActivity.class);
+                editRunIntent.putExtra("runID", String.valueOf(_runID));
+                editRunIntent.putExtra("source", EditSource.NewRun);
+                startActivity(editRunIntent);
             }
         });
     }
@@ -267,50 +231,49 @@ public class JoggingActivity extends FragmentActivity implements OnMapReadyCallb
     @Override
     public void onBackPressed() {
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        goBackToMain();
+    }
 
+    private void goBackToMain() {
         Intent listIntent = new Intent(JoggingActivity.this, MainActivity.class);
         startActivity(listIntent);
     }
 
-    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMyLocationEnabled(true);
-        getDeviceLocation();
-        startGPSService();
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(49.8794123, -97.253401), DEFAULT_ZOOM));
-        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+            getDeviceLocation();
+            startGPSService();
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        }
     }
 
     private void getDeviceLocation() {
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-        try {
-            if(hasPermissions()) {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            final Task location = mFusedLocationProviderClient.getLastLocation();
 
-                final Task location = mFusedLocationProviderClient.getLastLocation();
-                location.addOnCompleteListener(new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if(task.isSuccessful()) {
-                            Location currentLocation = (Location) task.getResult();
+            location.addOnCompleteListener(new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    if(task.isSuccessful()) {
+                        Location currentLocation = (Location) task.getResult();
 
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),
-                                    currentLocation.getLongitude()), DEFAULT_ZOOM));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),
+                                currentLocation.getLongitude()), DEFAULT_ZOOM));
 
-                            //moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
+                        //moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
 
-                        }
-                        else {
-                            Toast.makeText(JoggingActivity.this, "Erro: Unable to get current location", Toast.LENGTH_SHORT).show();
-                        }
                     }
-                });
-            }
-        }
-        catch (SecurityException e){
-            e.printStackTrace();
+                    else {
+                        Toast.makeText(JoggingActivity.this, "Error: Unable to get current location", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         }
     }
 

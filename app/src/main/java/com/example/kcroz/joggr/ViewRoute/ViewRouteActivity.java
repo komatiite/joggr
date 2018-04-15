@@ -29,6 +29,7 @@ import com.example.kcroz.joggr.JoggingActivity;
 import com.example.kcroz.joggr.JoggrHelper;
 import com.example.kcroz.joggr.ListRuns.ListRunsActivity;
 import com.example.kcroz.joggr.R;
+import com.example.kcroz.joggr.RecordRoute.EditSource;
 
 import java.util.List;
 import java.util.Map;
@@ -105,9 +106,10 @@ public class ViewRouteActivity extends AppCompatActivity {
         if (id == R.id.menuEditRun) {
             Log.d("Toolbar", "edit run");
 
-            Intent activityIntent = new Intent(ViewRouteActivity.this, EditRunActivity.class);
-            activityIntent.putExtra("runID", String.valueOf(runID));
-            startActivity(activityIntent);
+            Intent editRunIntent = new Intent(ViewRouteActivity.this, EditRunActivity.class);
+            editRunIntent.putExtra("runID", String.valueOf(runID));
+            editRunIntent.putExtra("source", EditSource.EditRun);
+            startActivity(editRunIntent);
 
             return true;
         }

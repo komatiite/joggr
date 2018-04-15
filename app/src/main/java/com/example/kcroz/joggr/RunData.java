@@ -8,7 +8,11 @@ public class RunData implements Parcelable {
     private String _date;
     private String _title;
     private float _distance;
-    private String _runTime;
+    private long _runTime;
+    private long _totalRunTime;
+    private long _warmUpTime;
+    private long _coolDownTime;
+
     private int _rating;
     private String _comment;
 
@@ -32,8 +36,23 @@ public class RunData implements Parcelable {
         return this;
     }
 
-    public RunData setRunTime(String runTime) {
+    public RunData setRunTime(long runTime) {
         _runTime = runTime;
+        return this;
+    }
+
+    public RunData setTotalRunTime(long totalRunTime) {
+        _totalRunTime = totalRunTime;
+        return this;
+    }
+
+    public RunData setWarmUpTime(long warmUpTime) {
+        _warmUpTime = warmUpTime;
+        return this;
+    }
+
+    public RunData setCoolDownTime(long coolDownTime) {
+        _coolDownTime = coolDownTime;
         return this;
     }
 
@@ -63,8 +82,20 @@ public class RunData implements Parcelable {
         return _distance;
     }
 
-    public String getRunTime() {
+    public long getRunTime() {
         return _runTime;
+    }
+
+    public long getTotalRunTime() {
+        return _totalRunTime;
+    }
+
+    public long getWarmUpTime() {
+        return _warmUpTime;
+    }
+
+    public long getCoolDownTime() {
+        return _coolDownTime;
     }
 
     public int getRating() {
@@ -80,7 +111,10 @@ public class RunData implements Parcelable {
         _date = in.readString();
         _title = in.readString();
         _distance = in.readFloat();
-        _runTime = in.readString();
+        _runTime = in.readLong();
+        _totalRunTime = in.readLong();
+        _warmUpTime = in.readLong();
+        _coolDownTime = in.readLong();
         _rating = in.readInt();
         _comment = in.readString();
     }
@@ -96,7 +130,10 @@ public class RunData implements Parcelable {
         dest.writeString(_date);
         dest.writeString(_title);
         dest.writeFloat(_distance);
-        dest.writeString(_runTime);
+        dest.writeLong(_runTime);
+        dest.writeLong(_totalRunTime);
+        dest.writeLong(_warmUpTime);
+        dest.writeLong(_coolDownTime);
         dest.writeInt(_rating);
         dest.writeString(_comment);
     }

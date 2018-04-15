@@ -211,7 +211,13 @@ public class ListRunsActivity extends AppCompatActivity {
 
         public void addFragment(Fragment fragment, int month, int year) {
             String monthName = JoggrHelper.getMonthName(month);
-            String title = monthName + " " + year;
+
+            String title = "No runs";
+
+            if (month != 0) {
+                title = monthName + " " + year;
+            }
+
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
         }

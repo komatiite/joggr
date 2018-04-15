@@ -25,7 +25,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COL_DATE = "Date";
     private static final String COL_TITLE = "Title";
     private static final String COL_DISTANCE = "Distance";
+
     private static final String COL_RUN_TIME = "RunTime";
+    private static final String COL_TOTAL_RUN_TIME = "TotalRunTime";
+    private static final String COL_WARM_UP_TIME = "WarmUpTime";
+    private static final String COL_COOL_DOWN_TIME = "CoolDownTime";
+
     private static final String COL_RATING = "Rating";
     private static final String COL_COMMENT = "Comment";
 
@@ -44,6 +49,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + COL_TITLE + " TEXT, "
             + COL_DISTANCE + " REAL NOT NULL, "
             + COL_RUN_TIME + " NUMERIC, "
+            + COL_TOTAL_RUN_TIME + " NUMERIC, "
+            + COL_WARM_UP_TIME + " NUMERIC, "
+            + COL_COOL_DOWN_TIME + " NUMERIC, "
             + COL_RATING + " INTEGER, "
             + COL_COMMENT + " TEXT);";
 
@@ -77,7 +85,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long insertRunValues(String date, String title, float distance, long runTime, int rating, String comment) {
+    public long insertRunValues(String date,
+                                String title,
+                                float distance,
+                                long runTime,
+                                long totalRunTime,
+                                long warmUpTime,
+                                long coolDownTime,
+                                int rating,
+                                String comment) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues insertValues = new ContentValues();
 
@@ -86,6 +102,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         insertValues.put(COL_TITLE, title);
         insertValues.put(COL_DISTANCE, distance);
         insertValues.put(COL_RUN_TIME, runTime);
+        insertValues.put(COL_TOTAL_RUN_TIME, totalRunTime);
+        insertValues.put(COL_WARM_UP_TIME, warmUpTime);
+        insertValues.put(COL_COOL_DOWN_TIME, coolDownTime);
         insertValues.put(COL_RATING, rating);
         insertValues.put(COL_COMMENT, comment);
 
@@ -213,7 +232,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Map<String, String> loadRunByID(int runID) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] selection = {COL_RUN_ID, COL_DATE, COL_TITLE, COL_DISTANCE, COL_RUN_TIME, COL_RATING, COL_COMMENT};
+        String[] selection = { COL_RUN_ID,
+                               COL_DATE,
+                               COL_TITLE,
+                               COL_DISTANCE,
+                               COL_RUN_TIME,
+                               COL_TOTAL_RUN_TIME,
+                               COL_WARM_UP_TIME,
+                               COL_COOL_DOWN_TIME,
+                               COL_RATING,
+                               COL_COMMENT};
 
         Cursor c = db.query(RUNS_TABLE_NAME,	//The name of the table to query
                 selection,				        //The columns to return
@@ -232,8 +260,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         map.put("Title", c.getString(2));
         map.put("Distance", String.valueOf(c.getFloat(3)));
         map.put("RunTime", c.getString(4));
-        map.put("Rating", String.valueOf(c.getInt(5)));
-        map.put("Comment", c.getString(6));
+        map.put("TotalRunTime", c.getString(5));
+        map.put("WarmUpTime", c.getString(6));
+        map.put("CoolDownTime", c.getString(7));
+        map.put("Rating", String.valueOf(c.getInt(8)));
+        map.put("Comment", c.getString(7));
 
         c.close();
         db.close();
@@ -246,7 +277,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<String> lm = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] selection = { COL_DATE};
+        String[] selection = { COL_DATE };
 
         Cursor c = db.query(RUNS_TABLE_NAME,	//The name of the table to query
                 selection,				//The columns to return
@@ -273,7 +304,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<RunData> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] selection = { COL_RUN_ID, COL_DATE, COL_TITLE, COL_DISTANCE, COL_RUN_TIME, COL_RATING, COL_COMMENT};
+        String[] selection = {  COL_RUN_ID,
+                                COL_DATE,
+                                COL_TITLE,
+                                COL_DISTANCE,
+                                COL_RUN_TIME,
+                                COL_TOTAL_RUN_TIME,
+                                COL_WARM_UP_TIME,
+                                COL_COOL_DOWN_TIME,
+                                COL_RATING,
+                                COL_COMMENT };
 
         Cursor c = db.query(RUNS_TABLE_NAME,	//The name of the table to query
                 selection,				//The columns to return
@@ -291,9 +331,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             run.setDate(c.getString(1))
                     .setTitle(c.getString(2))
                     .setDistance(c.getFloat(3))
-                    .setRunTime(c.getString(4))
-                    .setRating(c.getInt(5))
-                    .setComment(c.getString(6));
+                    .setRunTime(c.getLong(4))
+                    .setTotalRunTime(c.getLong(5))
+                    .setWarmUpTime(c.getLong(6))
+                    .setCoolDownTime(c.getLong(7))
+                    .setRating(c.getInt(8))
+                    .setComment(c.getString(9));
             list.add(run);
             c.moveToNext();
         }
@@ -309,7 +352,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Map<String,String>> lm = new ArrayList<Map<String,String>>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] selection = { COL_RUN_ID, COL_DATE, COL_TITLE, COL_DISTANCE, COL_RUN_TIME, COL_RATING, COL_COMMENT};
+        String[] selection = {  COL_RUN_ID,
+                COL_DATE,
+                COL_TITLE,
+                COL_DISTANCE,
+                COL_RUN_TIME,
+                COL_TOTAL_RUN_TIME,
+                COL_WARM_UP_TIME,
+                COL_COOL_DOWN_TIME,
+                COL_RATING,
+                COL_COMMENT };
 
         Cursor c = db.query(RUNS_TABLE_NAME,	//The name of the table to query
                 selection,				//The columns to return
@@ -329,8 +381,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             map.put("Title", c.getString(2));
             map.put("Distance", String.valueOf(c.getFloat(3)));
             map.put("RunTime", c.getString(4));
-            map.put("Rating", String.valueOf(c.getInt(5)));
-            map.put("Comment", c.getString(6));
+            map.put("TotalRunTime", c.getString(5));
+            map.put("WarmUpTime", c.getString(6));
+            map.put("CoolDownTime", c.getString(7));
+            map.put("Rating", String.valueOf(c.getInt(8)));
+            map.put("Comment", c.getString(7));
 
             lm.add(map);
             c.moveToNext();

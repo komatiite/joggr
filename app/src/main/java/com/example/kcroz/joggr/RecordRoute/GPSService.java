@@ -1,14 +1,17 @@
 package com.example.kcroz.joggr.RecordRoute;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 public class GPSService extends Service {
@@ -20,7 +23,6 @@ public class GPSService extends Service {
     private static String LONGITUDE = "Longitude";
     private static String TIMESTAMP = "Timestamp";
 
-    @SuppressLint("MissingPermission")
     @Override
     public void onCreate() {
         super.onCreate();
@@ -58,7 +60,10 @@ public class GPSService extends Service {
         };
 
         _locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
-        _locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 0, _locationListener);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            _locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 0, _locationListener);
+        }
     }
 
     @Override

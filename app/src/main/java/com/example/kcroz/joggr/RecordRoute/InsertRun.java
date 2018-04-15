@@ -27,11 +27,14 @@ public class InsertRun extends AsyncTask<Void, Void, Integer> {
     @Override
     protected Integer doInBackground(Void... param) {
         long runID = _dbHelper.insertRunValues(getCurrentDate(), // Date
-                                  null,             // Title
+                                  "New Run",             // Title
                                   0,                // Distance
                                   0,                // Run time
+                                  0,                // Total run time
+                                  0,                // Warm up time
+                                  0,                // Cool down time
                                   0,                // Rating
-                                  null);            // Comment
+                                  "");            // Comment
 
         return (int)runID;
     }

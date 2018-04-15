@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.kcroz.joggr.ListRuns.ListRunsActivity;
+import com.example.kcroz.joggr.RecordRoute.EditSource;
 import com.example.kcroz.joggr.ViewRoute.ViewRouteActivity;
 
 import java.util.List;
@@ -17,18 +18,25 @@ import java.util.Map;
 
 public class EditRunActivity extends AppCompatActivity {
 
+    private static String RUN_ID = "runID";
+    private static String SOURCE = "source";
+    private int _runID;
+    private EditSource _source;
+
     private TextView tvEditRunTitle;
     private EditText etRunTitle;
     private EditText etRating;
     private EditText etComment;
+
     private DatabaseHelper _dbHelper;
     private Map<String, String> _runData;
-    private static String RUN_ID = "runID";
-    private int _runID;
+
     private String _title;
     private float _distance;
     private int _rating;
     private String _comment;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +45,7 @@ public class EditRunActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         _runID = Integer.parseInt(bundle.getString(RUN_ID));
+        _source = EditSource.valueOf(bundle.getString(SOURCE));
 
         tvEditRunTitle = findViewById(R.id.tvEditRunTitle);
         etRunTitle = findViewById(R.id.etRunTitle);
