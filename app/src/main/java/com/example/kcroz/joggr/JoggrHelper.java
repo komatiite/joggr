@@ -17,6 +17,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.kcroz.joggr.ExportType.AllPointData;
+
 public class JoggrHelper {
 
     public static String getMonthName(int month) {
@@ -95,10 +97,11 @@ public class JoggrHelper {
         return distance;
     }
 
-    public static void exportToCSV(View view, List<Map<String, String>> inputData) {
+    public static void exportToCSV(View view, List<Map<String, String>> inputData, ExportType type) {
         File directory = new File(Environment.getExternalStorageDirectory(), "joggr");
         directory.mkdir();
-        String filename = getCurrentDate() + ".csv";
+        String filename = type == AllPointData ? getCurrentDate() + ".csv" : "run_" + inputData.get(0).get("RunID") + ".csv" ;
+
         File file = new File(directory, filename);
 
         try {

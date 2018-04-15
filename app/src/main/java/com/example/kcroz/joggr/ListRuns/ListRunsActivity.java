@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.example.kcroz.joggr.DatabaseHelper;
 import com.example.kcroz.joggr.EditRunActivity;
+import com.example.kcroz.joggr.ExportType;
 import com.example.kcroz.joggr.Heatmap.HeatmapActivity;
 import com.example.kcroz.joggr.JoggrHelper;
 import com.example.kcroz.joggr.MainActivity;
@@ -154,7 +155,7 @@ public class ListRunsActivity extends AppCompatActivity {
         View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
         View view = rootView.findViewById(R.id.lvRuns);
 
-        JoggrHelper.exportToCSV(view, getPointData());
+        JoggrHelper.exportToCSV(view, getPointData(), ExportType.AllPointData);
     }
 
     @Override

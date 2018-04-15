@@ -1,13 +1,17 @@
 package com.example.kcroz.joggr.ViewRoute;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,10 +19,14 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.example.kcroz.joggr.DatabaseHelper;
 import com.example.kcroz.joggr.EditRunActivity;
+import com.example.kcroz.joggr.ExportType;
 import com.example.kcroz.joggr.JoggingActivity;
+import com.example.kcroz.joggr.JoggrHelper;
 import com.example.kcroz.joggr.ListRuns.ListRunsActivity;
 import com.example.kcroz.joggr.R;
 
@@ -79,6 +87,18 @@ public class ViewRouteActivity extends AppCompatActivity {
 
         if (id == R.id.menuExportCSV) {
             Log.d("Toolbar", "export to csv");
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        2);
+            }
+            else {
+                exportToCSV();
+            }
+
             return true;
         }
 
@@ -102,6 +122,30 @@ public class ViewRouteActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void exportToCSV() {
+        View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+        View view = rootView.findViewById(R.id.container);
+
+        JoggrHelper.exportToCSV(view, getPointDataForRun(), ExportType.SpecificRunPointData);
+    }
+
+    private List<Map<String,String>> getPointDataForRun() {
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        return dbHelper.loadPointsForRun(runID);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == 2
+                && grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            exportToCSV();
+        }
+        else {
+            Toast.makeText(this, "Error: Write external storage permission denied", Toast.LENGTH_LONG).show();
+        }
     }
 
     private AlertDialog confirmDelete()
