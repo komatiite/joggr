@@ -1,9 +1,11 @@
 package com.example.kcroz.joggr;
 
+import android.app.Activity;
 import android.location.Location;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -14,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -82,8 +85,7 @@ public class JoggrHelper {
                 startLocation.setLongitude(Double.parseDouble(entry.get("Longitude")));
 
                 count++;
-            }
-            else {
+            } else {
                 endLocation.setLatitude(Double.parseDouble(entry.get("Latitude")));
                 endLocation.setLongitude(Double.parseDouble(entry.get("Longitude")));
 
@@ -94,7 +96,123 @@ public class JoggrHelper {
             }
         }
 
-        return distance;
+        return ((int) distance / 1000);
+    }
+
+    public static float[] calculateRunTimes(List<Map<String,String>> routeData) {
+        final int RUN_TIME = 0;
+        final int WARM_UP = 1;
+        final int COOL_DOWN = 2;
+        final int TOTAL_TIME = 3;
+
+        int count = 0;
+        int lastIndex = routeData.size() - 1;
+        Location startLocation = new Location("start");
+        Location endLocation = new Location("end");
+
+        Log.d("DATE: ", routeData.get(0).get("Timestamp"));
+
+        Date startTime = new Date(routeData.get(0).get("Timestamp"));
+        Date endTime = new Date(routeData.get(lastIndex).get("Timestamp"));
+
+        float[] runningAverage = { 0, 0, 0, 0, 0};
+        float[] results = { 0, 0, 0, 0 };
+        boolean runFlag = false;
+        int runAverageCount = 0;
+
+        long totalTimeDifference = endTime.getTime() - startTime.getTime();
+
+        Log.d("ABC", ""+totalTimeDifference);
+
+        results[TOTAL_TIME] = totalTimeDifference / 1000;
+
+        for(Map<String,String> point : routeData) {
+
+            if (count == 0) {
+                startLocation.setLatitude(Double.parseDouble(point.get("Latitude")));
+                startLocation.setLongitude(Double.parseDouble(point.get("Longitude")));
+
+                count++;
+            }
+            else {
+                endLocation.setLatitude(Double.parseDouble(point.get("Latitude")));
+                endLocation.setLongitude(Double.parseDouble(point.get("Longitude")));
+
+                float distance = startLocation.distanceTo(endLocation);
+
+                Log.d("DISTANCE", "" + distance);
+
+
+                startLocation.setLatitude(endLocation.getLatitude());
+                startLocation.setLongitude(endLocation.getLongitude());
+
+                endTime = new Date(point.get("Timestamp"));
+
+                long timeDifference = (endTime.getTime() - startTime.getTime()) / 1000;
+                Log.d("TIME DIFF", ""+timeDifference);
+
+                float metresPerSecond = distance / timeDifference;
+                Log.d("MPS", metresPerSecond + "");
+
+                float kmPerHour = metresPerSecond * 3.6f;
+
+                Log.d("KM/HR", kmPerHour + "");
+
+
+                runningAverage[0] = runningAverage[1];
+                runningAverage[1] = runningAverage[2];
+                runningAverage[2] = runningAverage[3];
+                runningAverage[3] = runningAverage[4];
+                runningAverage[4] = kmPerHour;
+
+                float total = 0;
+
+                for (int i = 0; i < runningAverage.length; i++) {
+                    total += runningAverage[i];
+                }
+
+                float average = total / runningAverage.length;
+                Log.d("AVG", average + "");
+
+
+                if (average <= 4 && !runFlag) {
+                    results[WARM_UP] += timeDifference;
+                    Log.d("WARMUP", results[1] + "");
+
+                }
+                else if (average > 4) {
+                    results[RUN_TIME] += timeDifference;
+
+                    Log.d("RUN", results[0] + "");
+
+
+                    // Ensure that user is well into run
+                    if (runAverageCount == 100) {
+                        runFlag = true;
+                    }
+                    else {
+                        runAverageCount++;
+                    }
+                }
+                else { // cool down
+                    results[COOL_DOWN] += timeDifference;
+                    Log.d("COOL", results[2]+"");
+
+                }
+
+                startTime = endTime;
+            }
+        }
+
+        Log.d("0", results[RUN_TIME]+"");
+        Log.d("1", results[WARM_UP]+"");
+        Log.d("2", results[COOL_DOWN]+"");
+        Log.d("3", results[TOTAL_TIME]+"");
+
+
+        Log.d("end", "***********************************************");
+
+        return results;
     }
 
     public static void exportToCSV(View view, List<Map<String, String>> inputData, ExportType type) {
@@ -138,5 +256,10 @@ public class JoggrHelper {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 
         return format.format(calendar.getTime());
+    }
+
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager manager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        manager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 }

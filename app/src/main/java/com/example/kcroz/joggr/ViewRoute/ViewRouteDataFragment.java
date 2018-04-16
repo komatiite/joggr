@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.example.kcroz.joggr.DatabaseHelper;
 import com.example.kcroz.joggr.R;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,15 +27,9 @@ public class ViewRouteDataFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_view_route_data, container, false);
-
-        Log.d("loaded", "loaded?");
-
         context = getActivity();
 
         runID = Integer.parseInt(getArguments().getString("RUN_ID"));
-
-        TextView tvRunIDOutput = view.findViewById(R.id.tvRunIDOutput);
-        tvRunIDOutput.setText(String.valueOf(runID));
 
         populateListView(view);
 
@@ -47,17 +42,26 @@ public class ViewRouteDataFragment extends Fragment {
         SimpleAdapter adapter = new SimpleAdapter(context,
                 getRouteList(),
                 R.layout.listview_route,
-                new String[] {"PointID", "Latitude", "Longitude", "RunID"},
-                new int[] {R.id.tvPointID, R.id.tvLatitude, R.id.tvLongitude, R.id.tvRunID2});
+                new String[] {"PointID", "Latitude", "Longitude", "Timestamp", "RunID"},
+                new int[] {R.id.tvPointID, R.id.tvLatitude, R.id.tvLongitude, R.id.tvTimeStamp, R.id.tvRunID2});
 
         lvRoute.setAdapter(adapter);
     }
 
     private List<Map<String,String>> getRouteList() {
         DatabaseHelper dbHelper = new DatabaseHelper(context);
-        Log.d("AAAAAA", String.valueOf(runID));
+        List<Map<String,String>> data = dbHelper.loadPointsForRun(runID);
 
-        return dbHelper.loadPointsForRun(runID);
-        //return dbHelper.loadPointDataToHash();
+        Map<String, String> map = new HashMap<>();
+
+        map.put("PointID", "Point ID");
+        map.put("Latitude", "Latitude");
+        map.put("Longitude", "Longitude");
+        map.put("Timestamp", "Timestamp");
+        map.put("RunID", "Run ID");
+
+        data.add(0, map);
+
+        return data;
     }
 }

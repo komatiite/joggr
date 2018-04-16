@@ -27,7 +27,7 @@ public class InsertRun extends AsyncTask<Void, Void, Integer> {
     @Override
     protected Integer doInBackground(Void... param) {
         long runID = _dbHelper.insertRunValues(getCurrentDate(), // Date
-                                  "New Run",             // Title
+                                  "Run Finished!",             // Title
                                   0,                // Distance
                                   0,                // Run time
                                   0,                // Total run time

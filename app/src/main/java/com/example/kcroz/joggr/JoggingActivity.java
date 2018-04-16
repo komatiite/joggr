@@ -42,6 +42,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.Date;
+
 public class JoggingActivity extends FragmentActivity implements OnMapReadyCallback {
 
     //private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -62,6 +64,7 @@ public class JoggingActivity extends FragmentActivity implements OnMapReadyCallb
     private double _latitude;
     private double _longitude;
     private long _timeStamp;
+    private Date _time;
     private double _prevLatitude;
     private double _prevLongitude;
     private int _runID;
@@ -93,9 +96,6 @@ public class JoggingActivity extends FragmentActivity implements OnMapReadyCallb
         btnStartJogging.setVisibility(View.INVISIBLE);
         btnStopJogging.setVisibility(View.INVISIBLE);
 
-
-        tvOutput = findViewById(R.id.tvOutput);
-
         enableStartStopButtons();
 
         SupportMapFragment mapFragment = (SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.joggingMap);
@@ -116,7 +116,6 @@ public class JoggingActivity extends FragmentActivity implements OnMapReadyCallb
                 animator.setDuration(500L);
                 animator.start();
                 btnStopJogging.setVisibility(View.VISIBLE);
-
 
                 new InsertRun(_context, new AsyncResponse(){
                     @Override
@@ -206,8 +205,7 @@ public class JoggingActivity extends FragmentActivity implements OnMapReadyCallb
         _latitude = Double.parseDouble(intent.getExtras().get(LATITUDE).toString());
         _longitude = Double.parseDouble(intent.getExtras().get(LONGITUDE).toString());
         _timeStamp = Long.parseLong(intent.getExtras().get(TIMESTAMP).toString());
-
-        tvOutput.setText(String.valueOf(_latitude));
+        _time = new java.util.Date(_timeStamp);
     }
 
     private void drawRoute() {
@@ -224,7 +222,8 @@ public class JoggingActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
     private void updateRoute() {
-        RoutePoint point = new RoutePoint(_latitude, _longitude, _timeStamp, _runID);
+        //RoutePoint point = new RoutePoint(_latitude, _longitude, _timeStamp, _runID);
+        RoutePoint point = new RoutePoint(_latitude, _longitude, _time, _runID);
         new InsertRoutePoint(this, point).execute();
     }
 

@@ -31,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermission();
         }
+        else {
+            enableMenuButtons();
+        }
     }
 
     public void requestPermission() {

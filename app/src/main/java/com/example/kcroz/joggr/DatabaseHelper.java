@@ -8,7 +8,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.kcroz.joggr.RecordRoute.RunRating;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,10 +51,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + COL_DATE + " NUMERIC NOT NULL, "
             + COL_TITLE + " TEXT, "
             + COL_DISTANCE + " REAL NOT NULL, "
-            + COL_RUN_TIME + " NUMERIC, "
-            + COL_TOTAL_RUN_TIME + " NUMERIC, "
-            + COL_WARM_UP_TIME + " NUMERIC, "
-            + COL_COOL_DOWN_TIME + " NUMERIC, "
+            + COL_RUN_TIME + " TEXT, "
+            + COL_TOTAL_RUN_TIME + " TEXT, "
+            + COL_WARM_UP_TIME + " TEXT, "
+            + COL_COOL_DOWN_TIME + " TEXT, "
             + COL_RATING + " INTEGER, "
             + COL_COMMENT + " TEXT);";
 
@@ -59,7 +62,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + COL_POINT_ID + " INTEGER NOT NULL PRIMARY KEY, "
             + COL_LATITUDE + " REAL NOT NULL, "
             + COL_LONGITUDE + " REAL NOT NULL, "
-            + COL_TIMESTAMP + " NUMERIC NOT NULL, "
+            + COL_TIMESTAMP + " TEXT NOT NULL, "
             + COL_RUN_ID_FK + " INTEGER NOT NULL);";
 
     //Drop tables statement
@@ -115,15 +118,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public void insertPointValues(double latitude, double longitude, long timestamp, int runID) {
+    /*public void insertPointValues(double latitude, double longitude, long timestamp, int runID) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues insertValues = new ContentValues();
+
+        //String stamp = String.valueOf(timestamp);
+
+        Log.d("DB: ", "" + timestamp);
 
         //insertValues.put(COL_POINT_ID, pointID);
         insertValues.put(COL_LATITUDE, latitude);
         insertValues.put(COL_LONGITUDE, longitude);
         insertValues.put(COL_TIMESTAMP, timestamp);
         insertValues.put(COL_RUN_ID_FK, runID);
+
+        db.insert(POINTS_TABLE_NAME, null, insertValues);
+
+        db.close();
+    }*/
+
+    public void insertPointValues(double latitude, double longitude, Date time, int runID) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues insertValues = new ContentValues();
+
+        //String stamp = String.valueOf(timestamp);
+
+        //Log.d("DB: ", "" + time);
+
+        //insertValues.put(COL_POINT_ID, pointID);
+        insertValues.put(COL_LATITUDE, latitude);
+        insertValues.put(COL_LONGITUDE, longitude);
+        insertValues.put(COL_TIMESTAMP, String.valueOf(time));
+        insertValues.put(COL_RUN_ID_FK, runID);
+
+        //Log.d("XXX", insertValues.getAsString("Timestamp"));
 
         db.insert(POINTS_TABLE_NAME, null, insertValues);
 
@@ -135,7 +163,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Map<String,String>> lm = new ArrayList<Map<String,String>>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] selection = {COL_POINT_ID, COL_LATITUDE, COL_LONGITUDE, COL_TIMESTAMP, COL_RUN_ID_FK};
+        //String timeFormat = "printf(\"%.9f\", " + COL_TIMESTAMP +")";
+
+        String[] selection = {COL_POINT_ID, COL_LATITUDE, COL_LONGITUDE, COL_TIMESTAMP, COL_RUN_ID_FK };
+        //String[] selection = {COL_POINT_ID, COL_LATITUDE, COL_LONGITUDE, timeFormat, COL_RUN_ID_FK };
+
         String condition = "RunID = " + runID;
 
         Cursor c = db.query(POINTS_TABLE_NAME,	//The name of the table to query
@@ -153,10 +185,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         for(int i=0; i < c.getCount(); i++) {
             Map<String,String> map = new HashMap<String,String>();
 
+            //Log.d("Retrieve: ", "" + c.getDouble(3));
+
             map.put("PointID", String.valueOf(c.getString(0)));
             map.put("Latitude", String.valueOf(c.getFloat(1)));
             map.put("Longitude", String.valueOf(c.getFloat(2)));
-            map.put("Timestamp", String.valueOf(c.getFloat(3)));
+            map.put("Timestamp", c.getString(3));
             map.put("RunID", String.valueOf(c.getInt(4)));
 
             lm.add(map);
@@ -241,7 +275,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                COL_WARM_UP_TIME,
                                COL_COOL_DOWN_TIME,
                                COL_RATING,
-                               COL_COMMENT};
+                               COL_COMMENT };
 
         Cursor c = db.query(RUNS_TABLE_NAME,	//The name of the table to query
                 selection,				        //The columns to return
@@ -264,7 +298,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         map.put("WarmUpTime", c.getString(6));
         map.put("CoolDownTime", c.getString(7));
         map.put("Rating", String.valueOf(c.getInt(8)));
-        map.put("Comment", c.getString(7));
+        map.put("Comment", c.getString(9));
 
         c.close();
         db.close();
@@ -432,8 +466,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return lm;
     }
 
-    public void updateRun(int runID, String title, int rating, String comment) {
+    public void updateNewRun(int runID, String title, float distance, String[] runTimes, RunRating rating, String comment) {
         SQLiteDatabase db = this.getReadableDatabase();
+
+        ContentValues cv = new ContentValues();
+
+        Log.d("Comment", comment);
+
+        cv.put(COL_TITLE, title);
+        cv.put(COL_DISTANCE, String.valueOf(distance));
+        cv.put(COL_RUN_TIME, runTimes[0]);
+        cv.put(COL_WARM_UP_TIME, runTimes[1]);
+        cv.put(COL_COOL_DOWN_TIME, runTimes[2]);
+        cv.put(COL_TOTAL_RUN_TIME, runTimes[3]);
+        cv.put(COL_RATING, String.valueOf(rating.ordinal()));
+        cv.put(COL_COMMENT, comment);
+
+        db.update(RUNS_TABLE_NAME, cv, COL_RUN_ID + "=" + runID, null);
+
+        db.close();
+    }
+
+    public void updateEditRun(int runID, String title, RunRating rating, String comment) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Log.d("Comment", comment);
 
         ContentValues cv = new ContentValues();
 

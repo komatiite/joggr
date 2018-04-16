@@ -6,6 +6,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.kcroz.joggr.DatabaseHelper;
@@ -15,40 +18,59 @@ import java.util.Map;
 
 public class ViewRouteStatsFragment extends Fragment {
 
-    private Context context;
-    private int runID;
-    private TextView tvStatsTitle;
-    private TextView tvStatsDate;
-    private TextView tvStatsRunTime;
-    private TextView tvStatsDistance;
-    private TextView tvStatsRating;
-    private TextView tvStatsComment;
+    private int _runID;
 
+    private TextView tvViewMainTitle;
+    private TextView tvViewDate;
+    private TextView tvViewDistance;
+    private TextView tvViewRunTime;
+    private TextView tvViewWarmUp;
+    private TextView tvViewCoolDown;
+    private TextView tvViewTotalRun;
+    private TextView tvViewRatings;
+    private TextView tvViewRunLog;
+
+    private Map<String, String> _runData;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_view_route_stats, container, false);
 
-        context = getActivity();
-        runID = Integer.parseInt(getArguments().getString("RUN_ID"));
+        _runID = Integer.parseInt(getArguments().getString("RUN_ID"));
 
-        tvStatsTitle = view.findViewById(R.id.tvStatsTitle);
-        tvStatsDate = view.findViewById(R.id.tvStatsDate);
-        tvStatsRunTime = view.findViewById(R.id.tvStatsRunTimeValue);
-        tvStatsDistance = view.findViewById(R.id.tvStatsDistanceValue);
-        tvStatsRating = view.findViewById(R.id.tvStatsRatingValue);
-        tvStatsComment = view.findViewById(R.id.tvStatsCommentValue);
-
-        DatabaseHelper dbHelper = new DatabaseHelper(getContext());
-        Map<String, String>  runData = dbHelper.loadRunByID(runID);
-
-        tvStatsTitle.setText(runData.get("Title"));
-        tvStatsDate.setText("For " + runData.get("Date"));
-        tvStatsRunTime.setText(runData.get("RunTime"));
-        tvStatsDistance.setText(runData.get("Distance"));
-        tvStatsRating.setText(runData.get("Rating"));
-        tvStatsComment.setText(runData.get("Comment"));
+        findIDs(view);
+        loadData();
+        setFields();
 
         return view;
+    }
+
+    private void findIDs(View view) {
+        tvViewMainTitle = view.findViewById(R.id.tvViewMainTitle);
+        tvViewDate = view.findViewById(R.id.tvViewDate);
+        tvViewDistance = view.findViewById(R.id.tvViewDistance);
+        tvViewRunTime = view.findViewById(R.id.tvViewRunTime);
+        tvViewWarmUp = view.findViewById(R.id.tvViewWarmUp);
+        tvViewCoolDown = view.findViewById(R.id.tvViewCoolDown);
+        tvViewTotalRun = view.findViewById(R.id.tvViewTotalRun);
+        tvViewRatings = view.findViewById(R.id.tvViewRating);
+        tvViewRunLog = view.findViewById(R.id.tvViewRunLog);
+    }
+
+    private void loadData() {
+        DatabaseHelper dbHelper = new DatabaseHelper(getContext());
+        _runData = dbHelper.loadRunByID(_runID);
+    }
+
+    private void setFields() {
+        tvViewMainTitle.setText(_runData.get("Title"));
+        tvViewDate.setText("For " + _runData.get("Date"));
+        tvViewDistance.setText("Distance: " + _runData.get("Distance") + " km");
+        tvViewRunTime.setText(_runData.get("RunTime"));
+        tvViewWarmUp.setText(_runData.get("WarmUpTime"));
+        tvViewCoolDown.setText(_runData.get("CoolDownTime"));
+        tvViewTotalRun.setText(_runData.get("TotalRunTime"));
+        tvViewRatings.setText(_runData.get("Rating"));
+        tvViewRunLog.setText(_runData.get("Comment"));
     }
 }

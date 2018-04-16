@@ -23,10 +23,15 @@ public class InsertRoutePoint extends AsyncTask<RoutePoint, Void, String> {
 
     @Override
     protected String doInBackground(RoutePoint... point) {
-        _dbHelper.insertPointValues(_point.getLatitude(),
+        /*_dbHelper.insertPointValues(_point.getLatitude(),
                                     _point.getLongitude(),
                                     _point.getTimeStamp(),
-                                    _point.getRunID());
+                                    _point.getRunID());*/
+
+        _dbHelper.insertPointValues(_point.getLatitude(),
+                _point.getLongitude(),
+                _point.getTime(),
+                _point.getRunID());
         return "";
     }
 

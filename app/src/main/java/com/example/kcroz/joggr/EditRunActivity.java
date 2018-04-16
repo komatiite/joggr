@@ -4,37 +4,56 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.kcroz.joggr.ListRuns.ListRunsActivity;
 import com.example.kcroz.joggr.RecordRoute.EditSource;
+import com.example.kcroz.joggr.RecordRoute.RunRating;
 import com.example.kcroz.joggr.ViewRoute.ViewRouteActivity;
 
 import java.util.List;
 import java.util.Map;
 
-public class EditRunActivity extends AppCompatActivity {
+public class EditRunActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private static String RUN_ID = "runID";
     private static String SOURCE = "source";
     private int _runID;
     private EditSource _source;
 
-    private TextView tvEditRunTitle;
-    private EditText etRunTitle;
-    private EditText etRating;
-    private EditText etComment;
+    private TextView tvERMainTitle;
+    private TextView tvERDate;
+    private TextView tvERDistance;
+    private TextView lbERRunTime;
+    private TextView lbERWarmUp;
+    private TextView lbERCoolDown;
+    private TextView lbERTotalRun;
+    private TextView tvERRunTime;
+    private TextView tvERWarmUp;
+    private TextView tvERCoolDown;
+    private TextView tvERTotalRun;
+    private EditText etEditTitle;
+    private Spinner spnRatings;
+    private EditText etRunLog;
+    private Button btnSaveRun;
 
     private DatabaseHelper _dbHelper;
     private Map<String, String> _runData;
+    private List<Map<String,String>> _routeData;
 
-    private String _title;
     private float _distance;
-    private int _rating;
-    private String _comment;
+    private String[] _runTimes;
+    private String _title;
+    private RunRating _rating;
+    private String _runLog;
 
 
 
@@ -42,20 +61,89 @@ public class EditRunActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_run);
+        View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+        View view = rootView.findViewById(R.id.EditRunContainer);
+        setupUI(view);
 
         Bundle bundle = getIntent().getExtras();
         _runID = Integer.parseInt(bundle.getString(RUN_ID));
-        _source = EditSource.valueOf(bundle.getString(SOURCE));
+        //_source = EditSource.valueOf(bundle.getString(SOURCE));
+        _source = (EditSource)getIntent().getSerializableExtra(SOURCE);
 
-        tvEditRunTitle = findViewById(R.id.tvEditRunTitle);
-        etRunTitle = findViewById(R.id.etRunTitle);
-        etRating = findViewById(R.id.etRating);
-        etComment = findViewById(R.id.etComment);
-
+        findIDs();
+        setupSpinner();
+        setSaveButtonListener();
         loadRunData();
+        loadRouteData();
 
-        Button btnSaveRun = findViewById(R.id.btnSaveRun);
+        if (_source == EditSource.NewRun) {
+            calculateDistance();
+            calculateTimes();
+        }
 
+        setFields();
+    }
+
+    private void findIDs() {
+        tvERMainTitle = findViewById(R.id.tvERMainTitle);
+        tvERDate = findViewById(R.id.tvERDate);
+        tvERDistance = findViewById(R.id.tvERDistance);
+        tvERRunTime = findViewById(R.id.tvERRunTime);
+        tvERWarmUp = findViewById(R.id.tvERWarmUp);
+        tvERCoolDown = findViewById(R.id.tvERCoolDown);
+        tvERTotalRun = findViewById(R.id.tvERTotalRun);
+        etEditTitle = findViewById(R.id.etEditTitle);
+        spnRatings = findViewById(R.id.spnRatings);
+        etRunLog = findViewById(R.id.etRunLog);
+        btnSaveRun = findViewById(R.id.btnSaveRun);
+    }
+
+    private void setupSpinner() {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.ratings_array,
+                android.R.layout.simple_spinner_item);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spnRatings.setAdapter(adapter);
+        spnRatings.setOnItemSelectedListener(this);
+    }
+
+    RunRating _ratingValue;
+
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        switch (position){
+            case 0:
+                _ratingValue = RunRating.Awful;
+                Log.d("cvb", "awful");
+                Log.d("cbv", _ratingValue.ordinal()+"");
+                break;
+            case 1:
+                _ratingValue = RunRating.Bad;
+                break;
+            case 2:
+                _ratingValue = RunRating.Meh;
+                break;
+            case 3:
+                _ratingValue = RunRating.Good;
+                break;
+            case 4:
+                _ratingValue = RunRating.Great;
+                break;
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+
+
+
+    private void setSaveButtonListener() {
         btnSaveRun.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,6 +162,85 @@ public class EditRunActivity extends AppCompatActivity {
         });
     }
 
+    public void loadRunData() {
+        _dbHelper = new DatabaseHelper(this);
+        _runData = _dbHelper.loadRunByID(_runID);
+
+        _runTimes = new String[4];
+        _runTimes[0] = _runData.get("RunTime");
+        _runTimes[1] = _runData.get("WarmUpTime");
+        _runTimes[2] = _runData.get("CoolDownTime");
+        _runTimes[3] = _runData.get("TotalRunTime");
+
+        // To remove
+        Log.d("Date", _runData.get("Date"));
+        Log.d("Title", _runData.get("Title"));
+        Log.d("Distance", _runData.get("Distance"));
+        Log.d("Rating", _runData.get("Rating"));
+        Log.d("Run Time", _runData.get("RunTime"));
+        Log.d("Warm Up Time", _runData.get("WarmUpTime"));
+        Log.d("Cool Down Time", _runData.get("CoolDownTime"));
+        Log.d("Total Run Time", _runData.get("TotalRunTime"));
+        Log.d("Run Log", _runData.get("Comment"));
+    }
+
+    private void loadRouteData() {
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        _routeData = dbHelper.loadPointsForRun(_runID);
+    }
+
+    private void calculateDistance() {
+        _distance = JoggrHelper.calculateDistance(_routeData);
+    }
+
+    private void calculateTimes() {
+        float[] results = JoggrHelper.calculateRunTimes(_routeData);
+
+        for (int i = 0; i < results.length; i++) {
+            int seconds = (int)results[i] % 60;
+            int minutes = (int)results[i] / 60;
+            int hours = 0;
+
+            if (minutes >= 60) {
+                hours = minutes / 60;
+                int hoursMinutes = hours * 60;
+                minutes = minutes - hoursMinutes;
+            }
+
+            _runTimes[i] = hours + ":" + minutes + ":" + seconds;
+        }
+    }
+
+    private void setFields() {
+        tvERMainTitle.setText(_runData.get("Title"));
+        tvERDate.setText(_runData.get("Date"));
+        tvERDistance.setText(_runData.get("Distance") + " km");
+        tvERRunTime.setText(_runTimes[0]);
+        tvERWarmUp.setText(_runTimes[1]);
+        tvERCoolDown.setText(_runTimes[2]);
+        tvERTotalRun.setText(_runTimes[3]);
+
+        if (_source == EditSource.EditRun) {
+            etEditTitle.setText(_runData.get("Title"));
+            etRunLog.setText(_runData.get("Comment"));
+        }
+    }
+
+    private void updateRunEntry() {
+        _dbHelper = new DatabaseHelper(this);
+
+        _title = etEditTitle.getText().toString();
+        //_rating = RunRating.valueOf(spnRatings.getSelectedItem().toString());
+        _runLog = etRunLog.getText().toString();
+
+        if (_source == EditSource.NewRun) {
+            _dbHelper.updateNewRun(_runID, _title, _distance, _runTimes, _ratingValue, _runLog);
+        }
+        else {
+            _dbHelper.updateEditRun(_runID, _title, _rating, _runLog);
+        }
+    }
+
     @Override
     public void onBackPressed() {
         Intent listIntent = new Intent(EditRunActivity.this, ListRunsActivity.class);
@@ -85,49 +252,14 @@ public class EditRunActivity extends AppCompatActivity {
         return dbHelper.loadPointsForRun(_runID).size();
     }
 
-    private void updateRunEntry() {
-        _dbHelper = new DatabaseHelper(this);
-
-        _title = etRunTitle.getText().toString();
-        _rating = Integer.parseInt(etRating.getText().toString());
-        _comment = etComment.getText().toString();
-
-
-        if (_distance == 0) {
-            _distance = JoggrHelper.calculateDistance(getRouteData());
+    private void setupUI(View view) {
+        if (!(view instanceof EditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    JoggrHelper.hideSoftKeyboard(EditRunActivity.this);
+                    return false;
+                }
+            });
         }
-
-        _dbHelper.updateRun(_runID, _title, _rating, _comment);
-    }
-
-    public void loadRunData() {
-        _dbHelper = new DatabaseHelper(this);
-        _runData = _dbHelper.loadRunByID(_runID);
-
-        Log.d("Date", _runData.get("Date"));
-        //Log.d("Title", _runData.get("Title"));
-        Log.d("Distance", _runData.get("Distance"));
-        Log.d("Rating", _runData.get("Rating"));
-        Log.d("Run Time", _runData.get("RunTime"));
-        //Log.d("Comment", _runData.get("Comment"));
-
-
-
-
-
-        _title = _runData.get("Title");
-        //_distance = Float.parseFloat(_runData.get("Distance"));
-        _rating = Integer.parseInt(_runData.get("Rating"));
-        _comment = _runData.get("Comment");
-
-        tvEditRunTitle.setText("Edit run data for " + _runData.get("Date"));
-        etRunTitle.setText(_title);
-        etRating.setText(String.valueOf(_rating));
-        etComment.setText(_comment);
-    }
-
-    private List<Map<String,String>> getRouteData() {
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
-        return dbHelper.loadPointsForRun(_runID);
     }
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="ratings_array">
+        <item>Great</item>
+        <item>Good</item>
+        <item>Meh</item>
+        <item>Bad</item>
+        <item>Awful</item>
+    </string-array>
+</resources>
