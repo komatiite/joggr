@@ -3,10 +3,8 @@ package com.example.kcroz.joggr;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -32,10 +30,6 @@ public class EditRunActivity extends AppCompatActivity implements AdapterView.On
     private TextView tvERMainTitle;
     private TextView tvERDate;
     private TextView tvERDistance;
-    private TextView lbERRunTime;
-    private TextView lbERWarmUp;
-    private TextView lbERCoolDown;
-    private TextView lbERTotalRun;
     private TextView tvERRunTime;
     private TextView tvERWarmUp;
     private TextView tvERCoolDown;
@@ -52,7 +46,7 @@ public class EditRunActivity extends AppCompatActivity implements AdapterView.On
     private float _distance;
     private String[] _runTimes;
     private String _title;
-    private RunRating _rating;
+    private String _rating;
     private String _runLog;
 
 
@@ -63,11 +57,10 @@ public class EditRunActivity extends AppCompatActivity implements AdapterView.On
         setContentView(R.layout.activity_edit_run);
         View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
         View view = rootView.findViewById(R.id.EditRunContainer);
-        setupUI(view);
+        setUIListener(view);
 
         Bundle bundle = getIntent().getExtras();
         _runID = Integer.parseInt(bundle.getString(RUN_ID));
-        //_source = EditSource.valueOf(bundle.getString(SOURCE));
         _source = (EditSource)getIntent().getSerializableExtra(SOURCE);
 
         findIDs();
@@ -117,8 +110,6 @@ public class EditRunActivity extends AppCompatActivity implements AdapterView.On
         switch (position){
             case 0:
                 _ratingValue = RunRating.Awful;
-                Log.d("cvb", "awful");
-                Log.d("cbv", _ratingValue.ordinal()+"");
                 break;
             case 1:
                 _ratingValue = RunRating.Bad;
@@ -139,9 +130,6 @@ public class EditRunActivity extends AppCompatActivity implements AdapterView.On
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
-
-
-
 
     private void setSaveButtonListener() {
         btnSaveRun.setOnClickListener(new View.OnClickListener() {
@@ -171,17 +159,6 @@ public class EditRunActivity extends AppCompatActivity implements AdapterView.On
         _runTimes[1] = _runData.get("WarmUpTime");
         _runTimes[2] = _runData.get("CoolDownTime");
         _runTimes[3] = _runData.get("TotalRunTime");
-
-        // To remove
-        Log.d("Date", _runData.get("Date"));
-        Log.d("Title", _runData.get("Title"));
-        Log.d("Distance", _runData.get("Distance"));
-        Log.d("Rating", _runData.get("Rating"));
-        Log.d("Run Time", _runData.get("RunTime"));
-        Log.d("Warm Up Time", _runData.get("WarmUpTime"));
-        Log.d("Cool Down Time", _runData.get("CoolDownTime"));
-        Log.d("Total Run Time", _runData.get("TotalRunTime"));
-        Log.d("Run Log", _runData.get("Comment"));
     }
 
     private void loadRouteData() {
@@ -222,19 +199,30 @@ public class EditRunActivity extends AppCompatActivity implements AdapterView.On
 
         if (_source == EditSource.EditRun) {
             etEditTitle.setText(_runData.get("Title"));
+            spnRatings.setSelection(getIndex(spnRatings, _runData.get("Rating")));
             etRunLog.setText(_runData.get("Comment"));
         }
+    }
+
+    private int getIndex(Spinner spinner, String selection) {
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(selection)) {
+                return i;
+            }
+        }
+
+        return 0;
     }
 
     private void updateRunEntry() {
         _dbHelper = new DatabaseHelper(this);
 
         _title = etEditTitle.getText().toString();
-        //_rating = RunRating.valueOf(spnRatings.getSelectedItem().toString());
+        _rating = spnRatings.getSelectedItem().toString();
         _runLog = etRunLog.getText().toString();
 
         if (_source == EditSource.NewRun) {
-            _dbHelper.updateNewRun(_runID, _title, _distance, _runTimes, _ratingValue, _runLog);
+            _dbHelper.updateNewRun(_runID, _title, _distance, _runTimes, _rating, _runLog);
         }
         else {
             _dbHelper.updateEditRun(_runID, _title, _rating, _runLog);
@@ -252,7 +240,7 @@ public class EditRunActivity extends AppCompatActivity implements AdapterView.On
         return dbHelper.loadPointsForRun(_runID).size();
     }
 
-    private void setupUI(View view) {
+    private void setUIListener(View view) {
         if (!(view instanceof EditText)) {
             view.setOnTouchListener(new View.OnTouchListener() {
                 public boolean onTouch(View v, MotionEvent event) {

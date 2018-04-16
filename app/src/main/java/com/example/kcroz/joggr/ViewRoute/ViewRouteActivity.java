@@ -51,11 +51,9 @@ public class ViewRouteActivity extends AppCompatActivity {
         runID = Integer.parseInt(getIntent().getStringExtra("RUN_ID"));
         List<Map<String,String>> routeData = getRouteList();
 
-
         runBundle = new Bundle();
         runBundle.putString("RUN_ID", String.valueOf(runID));
         runBundle.putString("ROUTE_HASH", String.valueOf(routeData));
-
 
         Toolbar toolbar = findViewById(R.id.viewRunToolbar);
         setSupportActionBar(toolbar);
@@ -87,8 +85,6 @@ public class ViewRouteActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.menuExportCSV) {
-            Log.d("Toolbar", "export to csv");
-
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
 
@@ -104,8 +100,6 @@ public class ViewRouteActivity extends AppCompatActivity {
         }
 
         if (id == R.id.menuEditRun) {
-            Log.d("Toolbar", "edit run");
-
             Intent editRunIntent = new Intent(ViewRouteActivity.this, EditRunActivity.class);
             editRunIntent.putExtra("runID", String.valueOf(runID));
             editRunIntent.putExtra("source", EditSource.EditRun);
@@ -115,8 +109,6 @@ public class ViewRouteActivity extends AppCompatActivity {
         }
 
         if (id == R.id.menuDeleteRun) {
-            Log.d("Toolbar", "delete run");
-
             AlertDialog dialog = confirmDelete();
             dialog.show();
 
@@ -150,14 +142,11 @@ public class ViewRouteActivity extends AppCompatActivity {
         }
     }
 
-    private AlertDialog confirmDelete()
-    {
-        Log.d("dialog", "in delete");
+    private AlertDialog confirmDelete() {
 
         return new AlertDialog.Builder(this)
                 .setTitle("Delete Run?")
                 .setMessage("Are you sure you want to delete this run?")
-                //.setIcon(R.drawable.delete)
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -209,7 +198,6 @@ public class ViewRouteActivity extends AppCompatActivity {
                     ViewRouteDataFragment dataTab = new ViewRouteDataFragment();
                     dataTab.setArguments(runBundle);
                     return dataTab;
-
                 default:
                     return null;
             }

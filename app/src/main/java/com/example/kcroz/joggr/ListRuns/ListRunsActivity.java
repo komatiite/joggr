@@ -49,7 +49,6 @@ public class ListRunsActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.tbListRuns);
         setSupportActionBar(toolbar);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mViewPager = findViewById(R.id.listRunsSectionPager);
         setupSectionPager(mViewPager);

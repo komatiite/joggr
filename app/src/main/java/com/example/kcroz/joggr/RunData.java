@@ -12,13 +12,11 @@ public class RunData implements Parcelable {
     private long _totalRunTime;
     private long _warmUpTime;
     private long _coolDownTime;
-
-    private int _rating;
+    private String _rating;
     private String _comment;
 
     public RunData(int runID) {
         _runID = runID;
-        //_title = "Default Title";
     }
 
     public RunData setDate(String date) {
@@ -56,7 +54,7 @@ public class RunData implements Parcelable {
         return this;
     }
 
-    public RunData setRating(int rating) {
+    public RunData setRating(String rating) {
         _rating = rating;
         return this;
     }
@@ -98,7 +96,7 @@ public class RunData implements Parcelable {
         return _coolDownTime;
     }
 
-    public int getRating() {
+    public String getRating() {
         return _rating;
     }
 
@@ -115,7 +113,7 @@ public class RunData implements Parcelable {
         _totalRunTime = in.readLong();
         _warmUpTime = in.readLong();
         _coolDownTime = in.readLong();
-        _rating = in.readInt();
+        _rating = in.readString();
         _comment = in.readString();
     }
 
@@ -134,7 +132,7 @@ public class RunData implements Parcelable {
         dest.writeLong(_totalRunTime);
         dest.writeLong(_warmUpTime);
         dest.writeLong(_coolDownTime);
-        dest.writeInt(_rating);
+        dest.writeString(_rating);
         dest.writeString(_comment);
     }
 

@@ -46,12 +46,7 @@ import java.util.Date;
 
 public class JoggingActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    //private FusedLocationProviderClient mFusedLocationProviderClient;
-
-    private TextView tvOutput;
-
     private FusedLocationProviderClient mFusedLocationProviderClient;
-
     private Context _context;
     private Button btnStartJogging;
     private Button btnStopJogging;
@@ -74,6 +69,7 @@ public class JoggingActivity extends FragmentActivity implements OnMapReadyCallb
     private boolean _connectedGPS = false;
     private ProgressBar pbGPS;
     private TextView tvProgress;
+    //private boolean _hasServices;
 
 
     @Override
@@ -82,14 +78,20 @@ public class JoggingActivity extends FragmentActivity implements OnMapReadyCallb
         setContentView(R.layout.activity_jogging);
 
         _context = getApplicationContext();
+        //_hasServices = Boolean.parseBoolean(getIntent().getStringExtra("has_services"));
 
         pbGPS = findViewById(R.id.pbGPS);
         tvProgress = findViewById(R.id.tvProgress);
-        //tvProgress.setBackgroundColor(0x000000);
         pbGPS.setVisibility(View.VISIBLE);
 
+        // Removed due to bug: https://issuetracker.google.com/issues/35822385
+        /*if (_hasServices) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        }*/
+
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
         btnStartJogging = findViewById(R.id.btnStartJogging);
         btnStopJogging = findViewById(R.id.btnStopJogging);
@@ -162,7 +164,6 @@ public class JoggingActivity extends FragmentActivity implements OnMapReadyCallb
             _receiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
-                    updateLocation(intent);
 
                     if (_running) {
                         if (pointCount > 0) {
@@ -197,20 +198,7 @@ public class JoggingActivity extends FragmentActivity implements OnMapReadyCallb
         registerReceiver(_receiver, new IntentFilter(GPS_LOCATION));
     }
 
-    private void updateLocation(Intent intent) {
-        if (pointCount > 0) {
-            _prevLatitude = _latitude;
-            _prevLongitude = _longitude;
-        }
-        _latitude = Double.parseDouble(intent.getExtras().get(LATITUDE).toString());
-        _longitude = Double.parseDouble(intent.getExtras().get(LONGITUDE).toString());
-        _timeStamp = Long.parseLong(intent.getExtras().get(TIMESTAMP).toString());
-        _time = new java.util.Date(_timeStamp);
-    }
-
     private void drawRoute() {
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(_latitude, _longitude), DEFAULT_ZOOM));
-
         PolylineOptions polylineOptions = new PolylineOptions();
         polylineOptions.add(new LatLng(_prevLatitude, _prevLongitude),
                             new LatLng(_latitude, _longitude));
@@ -222,7 +210,6 @@ public class JoggingActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
     private void updateRoute() {
-        //RoutePoint point = new RoutePoint(_latitude, _longitude, _timeStamp, _runID);
         RoutePoint point = new RoutePoint(_latitude, _longitude, _time, _runID);
         new InsertRoutePoint(this, point).execute();
     }

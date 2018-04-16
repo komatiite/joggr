@@ -1,5 +1,7 @@
 package com.example.kcroz.joggr;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
@@ -11,6 +13,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.kcroz.joggr.ListRuns.ListRunsActivity;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,11 +23,14 @@ public class MainActivity extends AppCompatActivity {
     private int _count = 0;
     private Button btnStart;
     private Button btnView;
+    //private boolean _hasServices;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //_hasServices = hasGooglePlayServices();
 
         btnStart = findViewById(R.id.btnStart);
         btnView = findViewById(R.id.btnView);
@@ -35,6 +42,19 @@ public class MainActivity extends AppCompatActivity {
             enableMenuButtons();
         }
     }
+
+    /*
+    * Originally included to handle an edge case on emulator where GoogleMap would not load
+    * due to outdated Google Play Services. MainActivity would pass a boolean flag to
+    * JoggingActivity to remove the 'lock screen' functionality while the GPS initializes so
+    * that the user could click the 'update' button. However, as described in the following
+    * issue - https://issuetracker.google.com/issues/35822385 - the update play services button
+    * doesn't work anyway due a bug.
+    *
+    private boolean hasGooglePlayServices() {
+        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+        return googleAPI.isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS;
+    }*/
 
     public void requestPermission() {
         ActivityCompat.requestPermissions(this,
@@ -67,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent joggingIntent = new Intent(MainActivity.this, JoggingActivity.class);
+                //joggingIntent.putExtra("has_services", String.valueOf(_hasServices));
                 MainActivity.this.startActivity(joggingIntent);
             }
         });

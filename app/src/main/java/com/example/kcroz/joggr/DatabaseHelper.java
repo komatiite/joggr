@@ -55,7 +55,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + COL_TOTAL_RUN_TIME + " TEXT, "
             + COL_WARM_UP_TIME + " TEXT, "
             + COL_COOL_DOWN_TIME + " TEXT, "
-            + COL_RATING + " INTEGER, "
+            + COL_RATING + " TEXT, "
             + COL_COMMENT + " TEXT);";
 
     private static final String POINTS_TABLE_CREATE = "CREATE TABLE " + POINTS_TABLE_NAME + " ("
@@ -297,7 +297,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         map.put("TotalRunTime", c.getString(5));
         map.put("WarmUpTime", c.getString(6));
         map.put("CoolDownTime", c.getString(7));
-        map.put("Rating", String.valueOf(c.getInt(8)));
+        map.put("Rating", c.getString(8));
         map.put("Comment", c.getString(9));
 
         c.close();
@@ -369,7 +369,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     .setTotalRunTime(c.getLong(5))
                     .setWarmUpTime(c.getLong(6))
                     .setCoolDownTime(c.getLong(7))
-                    .setRating(c.getInt(8))
+                    .setRating(c.getString(8))
                     .setComment(c.getString(9));
             list.add(run);
             c.moveToNext();
@@ -466,12 +466,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return lm;
     }
 
-    public void updateNewRun(int runID, String title, float distance, String[] runTimes, RunRating rating, String comment) {
+    public void updateNewRun(int runID, String title, float distance, String[] runTimes, String rating, String comment) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         ContentValues cv = new ContentValues();
 
         Log.d("Comment", comment);
+        Log.d("DB rating", rating);
 
         cv.put(COL_TITLE, title);
         cv.put(COL_DISTANCE, String.valueOf(distance));
@@ -479,7 +480,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_WARM_UP_TIME, runTimes[1]);
         cv.put(COL_COOL_DOWN_TIME, runTimes[2]);
         cv.put(COL_TOTAL_RUN_TIME, runTimes[3]);
-        cv.put(COL_RATING, String.valueOf(rating.ordinal()));
+        cv.put(COL_RATING, rating);
         cv.put(COL_COMMENT, comment);
 
         db.update(RUNS_TABLE_NAME, cv, COL_RUN_ID + "=" + runID, null);
@@ -487,16 +488,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void updateEditRun(int runID, String title, RunRating rating, String comment) {
+    public void updateEditRun(int runID, String title, String rating, String comment) {
         SQLiteDatabase db = this.getReadableDatabase();
-
-        Log.d("Comment", comment);
 
         ContentValues cv = new ContentValues();
 
+        Log.d("DB rating", rating);
+
         cv.put(COL_TITLE, title);
-        //cv.put(COL_DISTANCE, String.valueOf(distance));
-        cv.put(COL_RATING, String.valueOf(rating));
+        cv.put(COL_RATING, rating);
         cv.put(COL_COMMENT, comment);
 
         db.update(RUNS_TABLE_NAME, cv, COL_RUN_ID + "=" + runID, null);

@@ -70,7 +70,7 @@ public class MonthlyFragment extends Fragment {
             map.put("TotalRunTime", String.valueOf(data.get(i).getRunTime()));
             map.put("WarmUpTime", String.valueOf(data.get(i).getRunTime()));
             map.put("CoolDownTime", String.valueOf(data.get(i).getRunTime()));
-            map.put("Rating", String.valueOf(data.get(i).getRating()));
+            map.put("Rating", data.get(i).getRating());
             map.put("Comment", data.get(i).getComment());
             map.put("Icon", R.drawable.icon_jog + "");
 

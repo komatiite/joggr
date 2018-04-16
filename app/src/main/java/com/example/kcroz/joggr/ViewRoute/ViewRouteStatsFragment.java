@@ -3,6 +3,7 @@ package com.example.kcroz.joggr.ViewRoute;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,6 +64,8 @@ public class ViewRouteStatsFragment extends Fragment {
     }
 
     private void setFields() {
+        Log.d("View stats", _runData.get("Rating"));
+
         tvViewMainTitle.setText(_runData.get("Title"));
         tvViewDate.setText("For " + _runData.get("Date"));
         tvViewDistance.setText("Distance: " + _runData.get("Distance") + " km");

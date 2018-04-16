@@ -34,17 +34,19 @@
         <activity android:name=".ListRuns.ListRunsActivity">
         </activity>
 
-        <activity android:name=".ViewRoute.ViewRouteActivity">
+        <activity android:name=".ViewRoute.ViewRouteActivity"
+                  android:screenOrientation="portrait">
         </activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAOE7z3iDdymK-p-rfRujFI1x-oyHMDliw"/>
 
-        <activity android:name=".ViewRoute.ViewRoutePagerADapter">
+        <activity android:name=".ViewRoute.ViewRoutePagerAdapter">
         </activity>
 
-        <activity android:name=".EditRunActivity">
+        <activity android:name=".EditRunActivity"
+                  android:screenOrientation="portrait">
         </activity>
 
         <activity android:name=".Heatmap.HeatmapActivity">

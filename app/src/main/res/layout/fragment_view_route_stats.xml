@@ -55,41 +55,45 @@
 
         <TextView
             android:id="@+id/lbViewRunTime"
-            android:layout_width="100dp"
+            android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
+            android:textStyle="bold"
             android:text="Run time:"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvViewDistance"/>
 
         <TextView
             android:id="@+id/lbViewWarmUp"
-            android:layout_width="100dp"
+            android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:textStyle="bold"
             android:text="Warm up:"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lbViewRunTime"/>
 
         <TextView
             android:id="@+id/lbViewCoolDown"
-            android:layout_width="100dp"
+            android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:textStyle="bold"
             android:text="Cool down:"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lbViewWarmUp"/>
 
         <TextView
             android:id="@+id/lbViewTotalRun"
-            android:layout_width="100dp"
+            android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
+            android:textStyle="bold"
             android:text="Total time:"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -140,15 +144,19 @@
         android:id="@+id/ViewRunFields"
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ViewRunTime">
 
         <TextView
             android:id="@+id/lbViewEditRating"
-            android:layout_width="100dp"
+            android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:text="Rating:"
+            android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
@@ -163,24 +171,26 @@
 
         <TextView
             android:id="@+id/lbViewLog"
-            android:layout_width="100dp"
+            android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:text="Run log:"
+            android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lbViewEditRating"/>
 
         <TextView
             android:id="@+id/tvViewRunLog"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:ems="10"
             android:inputType="none"
-            android:text="Name"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lbViewLog"/>
 
 
