@@ -110,8 +110,6 @@ public class JoggrHelper {
         Location startLocation = new Location("start");
         Location endLocation = new Location("end");
 
-        Log.d("DATE: ", routeData.get(0).get("Timestamp"));
-
         Date startTime = new Date(routeData.get(0).get("Timestamp"));
         Date endTime = new Date(routeData.get(lastIndex).get("Timestamp"));
 
@@ -140,8 +138,6 @@ public class JoggrHelper {
 
                 float distance = startLocation.distanceTo(endLocation);
 
-                Log.d("DISTANCE", "" + distance);
-
 
                 startLocation.setLatitude(endLocation.getLatitude());
                 startLocation.setLongitude(endLocation.getLongitude());
@@ -149,15 +145,8 @@ public class JoggrHelper {
                 endTime = new Date(point.get("Timestamp"));
 
                 long timeDifference = (endTime.getTime() - startTime.getTime()) / 1000;
-                Log.d("TIME DIFF", ""+timeDifference);
-
                 float metresPerSecond = distance / timeDifference;
-                Log.d("MPS", metresPerSecond + "");
-
                 float kmPerHour = metresPerSecond * 3.6f;
-
-                Log.d("KM/HR", kmPerHour + "");
-
 
                 runningAverage[0] = runningAverage[1];
                 runningAverage[1] = runningAverage[2];
@@ -172,19 +161,12 @@ public class JoggrHelper {
                 }
 
                 float average = total / runningAverage.length;
-                Log.d("AVG", average + "");
-
 
                 if (average <= 4 && !runFlag) {
                     results[WARM_UP] += timeDifference;
-                    Log.d("WARMUP", results[1] + "");
-
-                }
+                   }
                 else if (average > 4) {
                     results[RUN_TIME] += timeDifference;
-
-                    Log.d("RUN", results[0] + "");
-
 
                     // Ensure that user is well into run
                     if (runAverageCount == 100) {
@@ -196,21 +178,11 @@ public class JoggrHelper {
                 }
                 else { // cool down
                     results[COOL_DOWN] += timeDifference;
-                    Log.d("COOL", results[2]+"");
-
                 }
 
                 startTime = endTime;
             }
         }
-
-        Log.d("0", results[RUN_TIME]+"");
-        Log.d("1", results[WARM_UP]+"");
-        Log.d("2", results[COOL_DOWN]+"");
-        Log.d("3", results[TOTAL_TIME]+"");
-
-
-        Log.d("end", "***********************************************");
 
         return results;
     }

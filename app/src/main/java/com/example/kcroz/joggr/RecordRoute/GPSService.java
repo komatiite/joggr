@@ -27,8 +27,6 @@ public class GPSService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        //Log.d("GPSService", "On Create");
-
         _locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -39,10 +37,6 @@ public class GPSService extends Service {
                 intent.putExtra(TIMESTAMP, location.getTime());
 
                 sendBroadcast(intent);
-
-                //Log.d("GPSService", String.valueOf(location.getLatitude()));
-                //Log.d("GPSService", String.valueOf(location.getTime()));
-
             }
 
             @Override

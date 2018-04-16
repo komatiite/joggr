@@ -28,12 +28,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COL_DATE = "Date";
     private static final String COL_TITLE = "Title";
     private static final String COL_DISTANCE = "Distance";
-
     private static final String COL_RUN_TIME = "RunTime";
     private static final String COL_TOTAL_RUN_TIME = "TotalRunTime";
     private static final String COL_WARM_UP_TIME = "WarmUpTime";
     private static final String COL_COOL_DOWN_TIME = "CoolDownTime";
-
     private static final String COL_RATING = "Rating";
     private static final String COL_COMMENT = "Comment";
 
@@ -202,66 +200,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return lm;
     }
-
-
-
-
-
-/*
-    public ArrayList<String> loadRunData() {
-        ArrayList<String> runData = new ArrayList<String>();
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String[] selection = {COL_RUN_ID, COL_DATE, COL_TITLE, COL_DISTANCE, COL_RUN_TIME, COL_RATING, COL_COMMENT};
-
-        Cursor c = db.query(RUNS_TABLE_NAME,	//The name of the table to query
-                selection,				//The columns to return
-                null,					//The columns for the where clause
-                null,					//The values for the where clause
-                null,					//Group the rows
-                null,					//Filter the row groups
-                null);					//The sort order
-
-        c.moveToFirst();
-
-        for(int i=0; i < c.getCount(); i++) {
-            runData.add(c.getString(0));
-            c.moveToNext();
-        }
-
-        c.close();
-        db.close();
-
-        return runData;
-    }
-
-    public ArrayList<String> loadPointData() {
-        ArrayList<String> pointData = new ArrayList<String>();
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String[] selection = {COL_POINT_ID, COL_LATITUDE, COL_LONGITUDE, COL_TIMESTAMP, COL_RUN_ID_FK};
-
-        Cursor c = db.query(POINTS_TABLE_NAME,	//The name of the table to query
-                selection,				//The columns to return
-                null,					//The columns for the where clause
-                null,					//The values for the where clause
-                null,					//Group the rows
-                null,					//Filter the row groups
-                null);					//The sort order
-
-        c.moveToFirst();
-
-        for(int i=0; i < c.getCount(); i++) {
-            pointData.add(c.getString(0));
-            c.moveToNext();
-        }
-
-        c.close();
-        db.close();
-
-        return pointData;
-    }*/
-
 
     public Map<String, String> loadRunByID(int runID) {
         SQLiteDatabase db = this.getReadableDatabase();

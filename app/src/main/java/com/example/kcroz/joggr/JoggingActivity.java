@@ -164,14 +164,14 @@ public class JoggingActivity extends FragmentActivity implements OnMapReadyCallb
             _receiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
-
                     if (_running) {
+                        updateLocation(intent);
+
                         if (pointCount > 0) {
                             drawRoute();
                         }
 
                         pointCount++;
-
                         updateRoute();
                     }
 
@@ -196,6 +196,17 @@ public class JoggingActivity extends FragmentActivity implements OnMapReadyCallb
         }
 
         registerReceiver(_receiver, new IntentFilter(GPS_LOCATION));
+    }
+
+    private void updateLocation(Intent intent) {
+        if (pointCount > 0) {
+            _prevLatitude = _latitude;
+            _prevLongitude = _longitude;
+        }
+        _latitude = Double.parseDouble(intent.getExtras().get(LATITUDE).toString());
+        _longitude = Double.parseDouble(intent.getExtras().get(LONGITUDE).toString());
+        _timeStamp = Long.parseLong(intent.getExtras().get(TIMESTAMP).toString());
+        _time = new java.util.Date(_timeStamp);
     }
 
     private void drawRoute() {
@@ -251,8 +262,6 @@ public class JoggingActivity extends FragmentActivity implements OnMapReadyCallb
 
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),
                                 currentLocation.getLongitude()), DEFAULT_ZOOM));
-
-                        //moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
 
                     }
                     else {

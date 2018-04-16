@@ -77,8 +77,6 @@ public class ListRunsActivity extends AppCompatActivity {
             year = Integer.parseInt(String.valueOf(date.charAt(2)) + date.charAt(3));
             month = Integer.parseInt(String.valueOf(date.charAt(7)) + date.charAt(8));
 
-            //Log.d("M/Y", String.valueOf(month) + " - " + year);
-
             if (count == 0) {
                 monthData.add(data.get(i));
                 previous = month;

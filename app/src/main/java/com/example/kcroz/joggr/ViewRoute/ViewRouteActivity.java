@@ -41,6 +41,7 @@ public class ViewRouteActivity extends AppCompatActivity {
     private int runID;
     private Bundle runBundle;
     private Context _context;
+    List<Map<String,String>> routeData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +50,7 @@ public class ViewRouteActivity extends AppCompatActivity {
         _context = this;
 
         runID = Integer.parseInt(getIntent().getStringExtra("RUN_ID"));
-        List<Map<String,String>> routeData = getRouteList();
+        routeData = getRouteList();
 
         runBundle = new Bundle();
         runBundle.putString("RUN_ID", String.valueOf(runID));
@@ -169,12 +170,12 @@ public class ViewRouteActivity extends AppCompatActivity {
                 })
                 .create();
     }
-
+/*
     @Override
     public void onBackPressed() {
         Intent listIntent = new Intent(ViewRouteActivity.this, ListRunsActivity.class);
         startActivity(listIntent);
-    }
+    }*/
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
